@@ -27,9 +27,13 @@ BiocManager::install("phyloseq")
 install.packages("csv")
 
 #### check your package installation:
+
 library(csv)
+
 library(dada2)
+
 library(phyloseq)
+
 library(tidyverse)
 
 #### The code for each of these should run without any errors
