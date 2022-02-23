@@ -7,11 +7,14 @@ library(csv)
 
 #load data into R for phyloseq analysis
 
+
+
 #load sample data
 sdata <- as.csv("/home/lgschaer/old/Plastic_Deg/DCPET_Zymo/samples2/DCPET_metadata.csv", row.names = 1, header = TRUE, sep = ",", check.names = TRUE, stringsAsFactors = TRUE)
 head(sdata)
 
 sdata2 <- sdata %>% 
+  rownames_to_column(var = "Sample_ID") %>%
   mutate(SampleName = Sample_Name) %>%
   select(c("SampleName", "Sample_Name", "Sample_ID", "Enrichment", "Carbon", "Media", "Replicate", "Media_Carbon"))
 head(sdata2)                                                       #view data to make sure everything is OK
@@ -40,6 +43,10 @@ colnames(nonzero) <- NULL                                          #remove colum
 seqtab = otu_table(nonzero, taxa_are_rows = FALSE)                 #define sequence table
 taxtab = tax_table(taxa_table)                                     #define taxa table
 rownames(taxtab) <- NULL                                           #remove rownames from taxa table
+
+
+sample_names(samdata)
+sample_names(seqtab)
 
 phyloseq_object_all = phyloseq(otu_table(seqtab), tax_table(taxtab), sample_data(samdata))
 phyloseq_object_all
@@ -330,15 +337,15 @@ phyloseq_object_all
 justbacteria
 
 #Summarize abundance of each class
-genusabundance_all <- rarefy_samplesover1000_all %>%
+genusabundance <- rarefy_samplesover1000_all %>%
   tax_glom(taxrank = "Genus") %>%                      # agglomerate at class level
   transform_sample_counts(function(x) {x/sum(x)} ) %>% # Transform to rel. abundance
   psmelt() %>%                                         # Melt to long format
   arrange(Genus) 
-head(genusabundance_all)
+head(genusabundance)
 
 #just the positive control
-pos <- genusabundance_all %>%
+pos <- genusabundance %>%
   select(Phylum, Class, Family, Genus, Sample, Abundance, Enrichment, Media_Carbon, Replicate) %>%
   filter(Abundance != 0) %>%
   filter(Enrichment == "PositiveControl") %>%
@@ -391,7 +398,7 @@ all <- genusabundance %>%
 head(all)
 
 phylum <- all %>%
-  group_by(Enrichment, Media_Carbon, Phylum)%>%
+  dplyr::group_by(Enrichment, Media_Carbon, Phylum)%>%
   summarise(Abundance = sum(Abundance)) %>%
   mutate(Phylum.1p = ifelse(Abundance < 0.01, "<1%", Phylum))%>%
   arrange(desc(Abundance, Sample))                           #Arrange with descending abundances

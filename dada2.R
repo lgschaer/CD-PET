@@ -6,13 +6,7 @@ library(dada2)
 library(phyloseq)
 library(csv)
 library(tidyverse)
-library(vegan)
-#install.packages("FSA")
-library(FSA)
-#install.packages("remotes")
-#remotes::install_github("opisthokonta/tsnemicrobiota")
-library(remotes)
-library(tsnemicrobiota)
+
 
 #-----MAKING ASV AND TAXA TABLES-----#
 
@@ -63,8 +57,8 @@ read.stats <- out %>%
 View(t(read.stats))
 
 #save csvs
-write.csv(out, "/home/lgschaer/old/Plastic_Deg/DCPET_Zymo/samples2/dada2_output/out.csv")
-write.csv(read.stats, "/home/lgschaer/old/Plastic_Deg/DCPET_Zymo/samples2/dada2_output/read.stats.csv")
+#write.csv(out, "/home/lgschaer/old/Plastic_Deg/DCPET_Zymo/samples2/dada2_output/out.csv")
+#write.csv(read.stats, "/home/lgschaer/old/Plastic_Deg/DCPET_Zymo/samples2/dada2_output/read.stats.csv")
 
 #learn about error rates
 errF <- learnErrors(filtFs, multithread=TRUE)
@@ -102,7 +96,6 @@ dim(seqtab)
 
 #inspect distribution of sequence lengths
 table(nchar(getSequences(seqtab)))
-table(nchar(getSequences(seqtab2)))
 
 #remove chimeras
 seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
@@ -126,9 +119,7 @@ taxa.print <- taxa # Removing sequence rownames for display only
 rownames(taxa.print) <- NULL
 head(taxa.print)
 
-library(csv)
-
 #save sequence table and taxa table
-saveRDS(seqtab.nochim, "/home/lgschaer/old/Plastic_Deg/DCPET_Zymo/samples2/dada2_output/seqtab.rds")     #sequence table
-saveRDS(taxa.print, "/home/lgschaer/old/Plastic_Deg/DCPET_Zymo/samples2/dada2_output/taxa.rds")          #taxa table
+#saveRDS(seqtab.nochim, "/home/lgschaer/old/Plastic_Deg/DCPET_Zymo/samples2/dada2_output/seqtab.rds")     #sequence table
+#saveRDS(taxa.print, "/home/lgschaer/old/Plastic_Deg/DCPET_Zymo/samples2/dada2_output/taxa.rds")          #taxa table
 
